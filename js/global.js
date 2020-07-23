@@ -4,25 +4,35 @@ const totalRecovered = $('#total-recovered')
 const newConfirmed = $('#new-confirmed')
 const newDeaths = $('#new-deaths')
 const newRecovered = $('#new-recovered')
-
-var countries = []
+const mostNewDeaths = $('#most-new-deaths')
+const mostNewCases = $('#most-new-cases')
 
 function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-function compareCases() {
-
+function compareCases(countryA, countryB) {
+  return countryB.NewConfirmed - countryA.NewConfirmed
 }
 
-function sortCountries(sortBy) {
-  if (sortBy == "New Cases") {
+function compareDeaths(countryA, countryB) {
+  return countryB.NewDeaths - countryA.NewDeaths
+}
 
-  } else if (sortBy == 'New Deaths') {
+function setMostNewDeaths(countries, length) {
+  const mostDeaths = countries.filter((country, i) => i < length)
+  mostNewDeaths.children().each(function(i) {
+    const countryLine = `${i + 1}. ${countries[i].Country}: ${numberWithCommas(mostDeaths[i].NewDeaths)} Deaths`
+    $(this).text(countryLine)
+  })
+}
 
-  } else if (sortBy == "New Recoveries") {
-
-  }
+function setMostNewCases(countries, length) {
+  const mostCases = countries.filter((country, i) => i < length)
+  mostNewCases.children().each(function(i) {
+    const countryLine = `${i + 1}. ${countries[i].Country}: ${numberWithCommas(mostCases[i].NewConfirmed)} Cases`
+    $(this).text(countryLine)
+  })
 }
 
 fetch('https://api.covid19api.com/summary')
@@ -34,7 +44,11 @@ fetch('https://api.covid19api.com/summary')
   newConfirmed.text(numberWithCommas(res.Global.NewConfirmed))
   newDeaths.text(numberWithCommas(res.Global.NewDeaths))
   newRecovered.text(numberWithCommas(res.Global.NewRecovered))
-  countries = res.Countries
+  const countries = res.Countries
+  countries.sort(compareCases)
+  setMostNewCases(countries, 5)
+  countries.sort(compareDeaths)
+  setMostNewDeaths(countries, 5)
 })
 .catch(err => {
   console.log(err)
