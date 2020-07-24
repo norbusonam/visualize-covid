@@ -1,9 +1,3 @@
-const totalConfirmed = $('#total-confirmed')
-const totalDeaths = $('#total-deaths')
-const totalRecovered = $('#total-recovered')
-const newConfirmed = $('#new-confirmed')
-const newDeaths = $('#new-deaths')
-const newRecovered = $('#new-recovered')
 const mostNewDeaths = $('#most-new-deaths')
 const mostNewCases = $('#most-new-cases')
 
@@ -35,15 +29,20 @@ function setMostNewCases(countries, length) {
   })
 }
 
+function countUp(id, number) {
+  const countAnimation = new CountUp(id, 0, number, 0, 1)
+  countAnimation.start()
+}
+
 fetch('https://api.covid19api.com/summary')
 .then(res => res.json())
 .then(res => {
-  totalConfirmed.text(numberWithCommas(res.Global.TotalConfirmed))
-  totalDeaths.text(numberWithCommas(res.Global.TotalDeaths))
-  totalRecovered.text(numberWithCommas(res.Global.TotalRecovered))
-  newConfirmed.text(numberWithCommas(res.Global.NewConfirmed))
-  newDeaths.text(numberWithCommas(res.Global.NewDeaths))
-  newRecovered.text(numberWithCommas(res.Global.NewRecovered))
+  countUp('total-confirmed', res.Global.TotalConfirmed)
+  countUp('total-deaths', res.Global.TotalDeaths)
+  countUp('total-recovered', res.Global.TotalRecovered)
+  countUp('new-confirmed', res.Global.NewConfirmed)
+  countUp('new-deaths', res.Global.NewDeaths)
+  countUp('new-recovered', res.Global.NewRecovered)
   const countries = res.Countries
   countries.sort(compareCases)
   setMostNewCases(countries, 5)
