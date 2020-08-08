@@ -1,5 +1,6 @@
 const mostNewDeaths = $('#most-new-deaths')
 const mostNewCases = $('#most-new-cases')
+const summaryUpdate = $('.summary-update')
 
 function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -34,6 +35,7 @@ function countUp(id, number) {
   countAnimation.start()
 }
 
+// Get and set data
 fetch('https://api.covid19api.com/summary')
 .then(res => res.json())
 .then(res => {
@@ -53,3 +55,6 @@ fetch('https://api.covid19api.com/summary')
   console.log(err)
 })
 
+// Set last updated time
+const now = new Date(Date.now())
+summaryUpdate.text(`Last updated ${now.toDateString()}`)
